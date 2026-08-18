@@ -10,14 +10,16 @@
     "growth": {
       "hero_level_cost": "修炼从当前等级升到下一级所需成本，n=当前修炼等级",
       "region_difficulty": "地区闯关难度（小怪/关卡强度），n=地区难度档",
-      "boss_power": "Boss 强度，n=Boss 档位"
+      "boss_power": "Boss 强度，n=Boss 档位",
+      "item_power_scale": "掉落物强度缩放系数：item_power = content 的 power_bonus(base) × base*rate**n，n=来源地区 difficulty"
     },
     "drops": {
-      "blindbox_base_rate": "挂机过程中每秒掉落盲盒的基础概率（泊松，无保底，随 activity 缩放；精确值待方案D模拟调参）",
-      "rarity": "盲盒稀有度分布（common/rare/epic，概率和=1，无保底）",
+      "blindbox_base_rate": "日常闯荡挂机过程中每秒掉落普通(common)盲盒的基础概率（泊松，无保底，随 activity 缩放）",
       "item_types": "盲盒物品类型分布（manual=秘籍/equipment=装备/elixir=丹药，概率和=1）",
       "qi_yu_rate": "奇遇事件每秒触发率（泊松）",
-      "recruit_rate": "招募事件每秒触发率（泊松）"
+      "recruit_rate": "招募事件每秒触发率（泊松）",
+      "ticket_rate": "Boss 门票每秒掉落率（日常闯荡挂机过程，泊松，随 activity 缩放）",
+      "blindbox_tiers": "盲盒稀有度按来源定义：日常闯荡=common、关卡 Boss=rare、地区 Boss=epic；各 tier 内物品稀有度权重（不跨更高稀有度）"
     },
     "economy": {
       "income_per_s": "每秒被动产出（qian=钱币/lingshi=灵石/shengwang=声望/neili=内力）",
@@ -48,22 +50,36 @@
     "boss_power": {
       "base": 500.0,
       "rate": 1.6
+    },
+    "item_power_scale": {
+      "base": 1.0,
+      "rate": 1.2
     }
   },
   "drops": {
     "blindbox_base_rate": 0.003,
-    "rarity": {
-      "common": 0.8,
-      "rare": 0.15,
-      "epic": 0.05
-    },
     "item_types": {
       "manual": 0.4,
       "equipment": 0.4,
       "elixir": 0.2
     },
     "qi_yu_rate": 0.002,
-    "recruit_rate": 0.001
+    "recruit_rate": 0.001,
+    "ticket_rate": 0.002,
+    "blindbox_tiers": {
+      "common": {
+        "common": 1.0
+      },
+      "rare": {
+        "common": 0.15,
+        "rare": 0.85
+      },
+      "epic": {
+        "common": 0.05,
+        "rare": 0.2,
+        "epic": 0.75
+      }
+    }
   },
   "economy": {
     "income_per_s": {

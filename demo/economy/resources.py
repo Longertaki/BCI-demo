@@ -57,10 +57,16 @@ def ensure_ledger(state) -> Ledger:
 
 def ensure_economy_state(state) -> dict:
     """Create/repair the ``state["economy"]`` sub-state owned by M4."""
+    # Boss 门票：挑战 Boss 消耗，日常闯荡掉落（契约 4.13 / US-67）。
+    state.setdefault("tickets", 0)
+
     eco = state.setdefault("economy", {})
     eco.setdefault("inventory", {})
     eco.setdefault("buildings", {})
     eco.setdefault("common_skill", {"points": 0, "level": 0})
+    # 待开盲盒明细（FIFO）：每个盲盒记录其来源 tier 与来源地区难度。
+    # ``state["pending_blindboxes"]`` 仍保持 int 计数（契约 3.4），两者同步。
+    eco.setdefault("pending_boxes", [])
     eco.setdefault("stats", {
         "earned": {key: 0.0 for key in RESOURCE_KEYS},
         "boxes_opened": 0,
@@ -68,6 +74,8 @@ def ensure_economy_state(state) -> dict:
         "exchanges": 0,
         "skills_learned": 0,
         "elixirs_used": 0,
+        "tickets_earned": 0,
+        "tickets_spent": 0,
     })
     eco.setdefault("last_income_time", float(state.get("time_s", 0.0)))
     return eco

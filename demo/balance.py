@@ -16,8 +16,8 @@
     - qiyun  段：qiyun（使用其中的 base/rate）
 
 掉落 key：
-    - drop_rate("blindbox_base_rate") / drop_rate("rarity.common") / drop_rate("item_types.manual") ...
-    - drop_table("rarity") / drop_table("item_types")
+    - drop_rate("blindbox_base_rate") / drop_rate("item_types.manual") ...
+    - drop_table("blindbox_tiers") / drop_table("item_types")
 
 另外暴露只读属性 `data`（完整 JSON）以及 `qiyun` / `growth_config` /
 `drops` / `economy`，便于 M3/M4 直接读取各自字段。
@@ -76,7 +76,7 @@ class Balance:
 
         drops = self.data.get("drops", {})
         if isinstance(drops, dict):
-            for table in ("rarity", "item_types"):
+            for table in ("item_types",):
                 t = drops.get(table)
                 if isinstance(t, dict) and t:
                     total = sum(float(x) for x in t.values())
@@ -141,7 +141,7 @@ class Balance:
 
         支持：
             - "blindbox_base_rate"（或别名 "blindbox_rate"）
-            - 点分路径："rarity.common" / "item_types.manual" 等
+            - 点分路径："item_types.manual" 等
             - drops 段中的直接数值 key
         """
         drops = self.data.get("drops", {})
@@ -161,10 +161,10 @@ class Balance:
         raise KeyError(f"未定义的掉落概率 key: {key!r}")
 
     def drop_table(self, key: str) -> dict:
-        """读取掉落分布表（dict），如 "rarity" / "item_types"。"""
+        """读取掉落分布表（dict），如 "blindbox_tiers" / "item_types"。"""
         drops = self.data.get("drops", {})
         if key not in drops or not isinstance(drops[key], dict):
-            raise KeyError(f"未定义的掉落表 key: {key!r}（可用：rarity / item_types）")
+            raise KeyError(f"未定义的掉落表 key: {key!r}（可用：blindbox_tiers / item_types）")
         return dict(drops[key])
 
     # ---------------------------------------------------------------- 其他
@@ -183,5 +183,5 @@ if __name__ == "__main__":  # 最小自测：python balance.py
     print("growth(boss_power, 3) =", b.growth("boss_power", 3))
     print("curve(qiyun, 5) =", b.curve("qiyun", 5))
     print("drop_rate(blindbox_base_rate) =", b.drop_rate("blindbox_base_rate"))
-    print("drop_rate(rarity.epic) =", b.drop_rate("rarity.epic"))
+    print("drop_table(blindbox_tiers) =", b.drop_table("blindbox_tiers"))
     print("drop_table(item_types) =", b.drop_table("item_types"))

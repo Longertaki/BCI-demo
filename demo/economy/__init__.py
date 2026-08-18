@@ -125,7 +125,11 @@ class Economy:
     # 契约 API
     # ------------------------------------------------------------------ #
     def apply(self, world, events) -> None:
-        """结算 M3 产出的事件流（income_tick / blindbox_drop / qi_yu / recruit / boss_defeated）。"""
+        """结算 M3 产出的事件流。
+
+        income_tick / ticket_drop / blindbox_drop / qi_yu / recruit / boss_defeated。
+        boss_defeated 结算时扣减门票（world.state["tickets"]）并按其来源 tier 发放盲盒。
+        """
         state = self._state(world)
         self._ensure(state)
         for event in events or []:
@@ -143,27 +147,38 @@ class Economy:
                 dt_s = max(0.0, float(state.get("time_s", 0.0)) - last)
             self.resources.tick_income(state, dt_s)
 
+        elif etype == "ticket_drop":
+            count = max(0, int(data.get("count", 0) or 0))
+            if count:
+                state["tickets"] = int(state.get("tickets", 0) or 0) + count
+                stats = state["economy"]["stats"]
+                stats["tickets_earned"] = int(stats.get("tickets_earned", 0) or 0) + count
+
         elif etype == "blindbox_drop":
             count = max(0, int(data.get("count", data.get("blindboxes", 1)) or 0))
-            state["pending_blindboxes"] = int(state.get("pending_blindboxes", 0) or 0) + count
+            tier = data.get("blindbox_tier") or data.get("tier") or "common"
+            difficulty = data.get("difficulty") or data.get("region_difficulty")
+            region_id = data.get("region_id")
+            if difficulty is None:
+                difficulty = self.catalog.region_difficulty(region_id or state.get("region_id"))
+            self._add_pending_boxes(state, count, tier, int(difficulty or 1), region_id)
 
         elif etype == "qi_yu":
             rewards = data.get("rewards") or data.get("resources") or {}
             self._grant(state, rewards)
             boxes = int(data.get("blindboxes", data.get("pending_blindboxes", 0)) or 0)
             if boxes:
-                state["pending_blindboxes"] = int(state.get("pending_blindboxes", 0) or 0) + boxes
+                tier = data.get("blindbox_tier") or "common"
+                difficulty = data.get("difficulty") or data.get("region_difficulty")
+                region_id = data.get("region_id")
+                if difficulty is None:
+                    difficulty = self.catalog.region_difficulty(region_id or state.get("region_id"))
+                self._add_pending_boxes(state, boxes, tier, int(difficulty or 1), region_id)
             if not rewards and not boxes:
                 self._grant_qi_yu_default(state)
 
         elif etype == "boss_defeated":
-            rewards = data.get("rewards") or data.get("resources") or {}
-            self._grant(state, rewards)
-            boxes = int(data.get("blindboxes", data.get("pending_blindboxes", 0)) or 0)
-            if boxes:
-                state["pending_blindboxes"] = int(state.get("pending_blindboxes", 0) or 0) + boxes
-            if data.get("won") and not rewards and not boxes:
-                self._grant_boss_reward(state, data.get("difficulty", 1))
+            self._apply_boss_event(state, data)
 
         elif etype == "recruit":
             hero = data.get("hero")
@@ -173,6 +188,65 @@ class Economy:
                 state.setdefault("all_heroes", []).append(hero)
 
         # 未知事件类型忽略，保证向前兼容
+
+    def _add_pending_boxes(self, state, count, tier, difficulty, region_id=None):
+        """累计待开盲盒计数，并按来源 tier/地区难度登记明细（FIFO）。"""
+        count = max(0, int(count or 0))
+        if count <= 0:
+            return
+        state["pending_blindboxes"] = int(state.get("pending_blindboxes", 0) or 0) + count
+        boxes = state["economy"].setdefault("pending_boxes", [])
+        difficulty = max(1, int(difficulty or 1))
+        for _ in range(count):
+            boxes.append({
+                "tier": tier or "common",
+                "difficulty": difficulty,
+                "region_id": region_id,
+            })
+
+    def _apply_boss_event(self, state, data):
+        # 1) 门票结算：挑战即消耗（无论胜负）；core 已在挑战前检查门票数量。
+        ticket_cost = max(0, int(data.get("ticket_cost", 0) or 0))
+        if ticket_cost:
+            state["tickets"] = max(0, int(state.get("tickets", 0) or 0) - ticket_cost)
+            stats = state["economy"]["stats"]
+            stats["tickets_spent"] = int(stats.get("tickets_spent", 0) or 0) + ticket_cost
+
+        # 2) 显式资源奖励照发（兼容旧事件）；胜利且未显式给奖励时发默认 boss_reward。
+        rewards = data.get("rewards") or data.get("resources") or {}
+        self._grant(state, rewards)
+
+        boxes = int(data.get("blindboxes") or data.get("pending_blindboxes") or 0)
+        tier = data.get("blindbox_tier") or (
+            "epic" if data.get("boss_kind") == "region" else "rare"
+        )
+        difficulty = max(1, int(data.get("difficulty") or data.get("region_difficulty") or 1))
+        won = bool(data.get("won", True))
+
+        if won and not rewards and not boxes:
+            rewards = self._boss_rewards(difficulty)
+            self._grant(state, rewards)
+            boxes = self._boss_blindbox_count(difficulty)
+
+        if won and boxes:
+            self._add_pending_boxes(state, boxes, tier, difficulty, data.get("region_id"))
+
+    def _boss_rewards(self, difficulty):
+        """Boss 胜利默认资源奖励（qian/lingshi/shengwang），数值来自 balance.json。"""
+        cfg = self.eco_cfg.get("boss_reward", {}) or {}
+        difficulty = max(1, int(difficulty or 1))
+        return {
+            "qian": as_number(cfg.get("qian_base"), 0.0)
+                    + as_number(cfg.get("qian_per_difficulty"), 0.0) * (difficulty - 1),
+            "lingshi": as_number(cfg.get("lingshi_per_difficulty"), 0.0) * difficulty,
+            "shengwang": as_number(cfg.get("shengwang_per_difficulty"), 0.0) * difficulty,
+        }
+
+    def _boss_blindbox_count(self, difficulty):
+        """Boss 胜利默认盲盒数量（blindboxes_per_difficulty × difficulty）。"""
+        cfg = self.eco_cfg.get("boss_reward", {}) or {}
+        difficulty = max(1, int(difficulty or 1))
+        return max(0, int(as_number(cfg.get("blindboxes_per_difficulty"), 0.0) * difficulty))
 
     def _grant_qi_yu_default(self, state):
         cfg = self.eco_cfg.get("qi_yu", {}) or {}
@@ -188,20 +262,6 @@ class Economy:
             rewards["lingshi"] = rnd("lingshi")
         if rewards:
             self._grant(state, rewards)
-
-    def _grant_boss_reward(self, state, difficulty):
-        cfg = self.eco_cfg.get("boss_reward", {}) or {}
-        difficulty = max(1, int(difficulty or 1))
-        rewards = {
-            "qian": as_number(cfg.get("qian_base"), 0.0)
-                    + as_number(cfg.get("qian_per_difficulty"), 0.0) * (difficulty - 1),
-            "lingshi": as_number(cfg.get("lingshi_per_difficulty"), 0.0) * difficulty,
-            "shengwang": as_number(cfg.get("shengwang_per_difficulty"), 0.0) * difficulty,
-        }
-        self._grant(state, {k: v for k, v in rewards.items() if v > 0})
-        blindboxes = int(as_number(cfg.get("blindboxes_per_difficulty"), 0.0) * difficulty)
-        if blindboxes > 0:
-            state["pending_blindboxes"] = int(state.get("pending_blindboxes", 0) or 0) + blindboxes
 
     def open_blindbox(self, world) -> dict:
         """手动开一个盲盒（无保底）。返回 ``{"ok": bool, ...}``。"""

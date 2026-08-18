@@ -1,6 +1,6 @@
 {
   "_doc": {
-    "regions": "地区列表：difficulty=地区难度档（对应 growth.region_difficulty 曲线的 n）；boss.tier=Boss 档位（对应 growth.boss_power 曲线的 n）",
+    "regions": "地区列表：difficulty=地区难度档（对应 growth.region_difficulty 曲线与掉落强度缩放）；levels=关卡列表（每关一个关卡 Boss）；region_boss=地区 Boss（通关该地区所有关卡后才可挑战）；击败地区 Boss 进入下一地区；闯关无等级门槛，按通关上一地区解锁。",
     "heroes": "预设侠客：background=固定背景，aptitude=资质(1~10)，faction=正魔(zheng/mo)；level/skills/equipment 为初始值；power 由 M3 派生，不在此定义",
     "manuals": "秘籍：faction=universal(通用，正魔皆可)/zheng/mo；rarity=稀有度；power_bonus=强度加成",
     "equipment": "装备：slot=部位；quality=品质；affixes=特殊词条（示例，百分比加成由 M4 结算）；power_bonus=强度加成",
@@ -12,10 +12,32 @@
       "name": "新手村外",
       "difficulty": 1,
       "desc": "草莽初开，野物出没。",
-      "boss": {
-        "id": "b1",
+      "levels": [
+        {
+          "id": "r1_l1",
+          "name": "村口野径",
+          "boss": {
+            "id": "r1_b1",
+            "name": "野狗",
+            "tier": 1,
+            "desc": "成群游荡的野狗。"
+          }
+        },
+        {
+          "id": "r1_l2",
+          "name": "乱石坡",
+          "boss": {
+            "id": "r1_b2",
+            "name": "野猪",
+            "tier": 1,
+            "desc": "横冲直撞的凶悍野猪。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r1_rb",
         "name": "野猪王",
-        "tier": 1,
+        "tier": 2,
         "desc": "盘踞村外的獠牙凶兽。"
       }
     },
@@ -24,10 +46,32 @@
       "name": "华山脚下",
       "difficulty": 2,
       "desc": "名门试炼之地，剑客往来。",
-      "boss": {
-        "id": "b2",
+      "levels": [
+        {
+          "id": "r2_l1",
+          "name": "山门石阶",
+          "boss": {
+            "id": "r2_b1",
+            "name": "守山弟子",
+            "tier": 2,
+            "desc": "把守山门的入门弟子。"
+          }
+        },
+        {
+          "id": "r2_l2",
+          "name": "试剑台",
+          "boss": {
+            "id": "r2_b2",
+            "name": "华山剑客",
+            "tier": 2,
+            "desc": "以剑试招的华山剑客。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r2_rb",
         "name": "华山剑灵",
-        "tier": 2,
+        "tier": 3,
         "desc": "守护山门的残剑之灵。"
       }
     },
@@ -36,10 +80,32 @@
       "name": "西域秘境",
       "difficulty": 3,
       "desc": "黄沙之下埋藏古国秘宝。",
-      "boss": {
-        "id": "b3",
+      "levels": [
+        {
+          "id": "r3_l1",
+          "name": "黄沙古道",
+          "boss": {
+            "id": "r3_b1",
+            "name": "沙盗斥候",
+            "tier": 3,
+            "desc": "潜伏沙丘的沙盗探子。"
+          }
+        },
+        {
+          "id": "r3_l2",
+          "name": "古国遗址",
+          "boss": {
+            "id": "r3_b2",
+            "name": "沙盗头目",
+            "tier": 3,
+            "desc": "盘踞遗址的沙盗头目。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r3_rb",
         "name": "沙盗首领",
-        "tier": 3,
+        "tier": 4,
         "desc": "劫掠商旅的悍匪头目。"
       }
     },
@@ -48,10 +114,32 @@
       "name": "魔教总坛",
       "difficulty": 4,
       "desc": "黑木崖上，魔焰滔天。",
-      "boss": {
-        "id": "b4",
+      "levels": [
+        {
+          "id": "r4_l1",
+          "name": "黑木崖脚",
+          "boss": {
+            "id": "r4_b1",
+            "name": "魔教门徒",
+            "tier": 4,
+            "desc": "巡山的魔教门徒。"
+          }
+        },
+        {
+          "id": "r4_l2",
+          "name": "总坛大殿",
+          "boss": {
+            "id": "r4_b2",
+            "name": "魔教长老",
+            "tier": 4,
+            "desc": "坐镇大殿的魔教长老。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r4_rb",
         "name": "魔教护法",
-        "tier": 4,
+        "tier": 5,
         "desc": "镇守总坛的魔道高手。"
       }
     },
@@ -60,10 +148,32 @@
       "name": "海外仙岛",
       "difficulty": 5,
       "desc": "沧海之上，仙缘缥缈。",
-      "boss": {
-        "id": "b5",
+      "levels": [
+        {
+          "id": "r5_l1",
+          "name": "蓬莱渡口",
+          "boss": {
+            "id": "r5_b1",
+            "name": "海妖",
+            "tier": 5,
+            "desc": "兴风作浪的深海海妖。"
+          }
+        },
+        {
+          "id": "r5_l2",
+          "name": "仙岛迷阵",
+          "boss": {
+            "id": "r5_b2",
+            "name": "守岛仙童",
+            "tier": 5,
+            "desc": "以阵法困人的守岛仙童。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r5_rb",
         "name": "仙岛老祖",
-        "tier": 5,
+        "tier": 6,
         "desc": "避世不出的隐世强者。"
       }
     },
@@ -72,10 +182,32 @@
       "name": "九幽深渊",
       "difficulty": 6,
       "desc": "九幽之下，万物沉寂。",
-      "boss": {
-        "id": "b6",
+      "levels": [
+        {
+          "id": "r6_l1",
+          "name": "九幽入口",
+          "boss": {
+            "id": "r6_b1",
+            "name": "幽魂",
+            "tier": 6,
+            "desc": "游荡于九幽入口的幽魂。"
+          }
+        },
+        {
+          "id": "r6_l2",
+          "name": "深渊尽头",
+          "boss": {
+            "id": "r6_b2",
+            "name": "九幽魔将",
+            "tier": 6,
+            "desc": "镇守深渊尽头的魔将。"
+          }
+        }
+      ],
+      "region_boss": {
+        "id": "r6_rb",
         "name": "深渊魔主",
-        "tier": 6,
+        "tier": 7,
         "desc": "深渊尽头的万魔之主。"
       }
     }

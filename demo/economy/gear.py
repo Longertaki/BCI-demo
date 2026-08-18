@@ -108,6 +108,7 @@ class GearCatalog:
         self.equipment = {}
         self.elixirs = {}
         content = content or {}
+        self.content = content
         for raw in content.get("manuals", []) or []:
             item = Manual(
                 id=raw["id"],
@@ -168,3 +169,13 @@ class GearCatalog:
         for item in self.items_of_kind(kind):
             grouped.setdefault(item.rarity, []).append(item)
         return grouped
+
+    def region_difficulty(self, region_id) -> int:
+        """返回地区难度档；未知地区回退 1（掉落强度缩放 n 的下界）。"""
+        for region in (self.content.get("regions") or []):
+            if isinstance(region, dict) and region.get("id") == region_id:
+                try:
+                    return int(region.get("difficulty", 1))
+                except (TypeError, ValueError):
+                    return 1
+        return 1

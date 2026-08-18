@@ -10,12 +10,13 @@ from .adventurer import (
     recompute_power,
 )
 from .qiyun import activity_factor, qiyun_speed, skill_multiplier
-from .region import Region, boss_power, region_power
+from .region import Level, Region, boss_power, region_power
 from .world import World
 
 __all__ = [
     "World",
     "Region",
+    "Level",
     "region_power",
     "boss_power",
     "qiyun_speed",
