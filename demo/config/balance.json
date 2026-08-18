@@ -1,5 +1,35 @@
 {
-  "_note": "数值骨架，由执行者 E1 细化填充",
+  "_doc": {
+    "curve_format": "曲线参数统一为 {base, rate}，取值 = base * rate ** n（n 为等级/档位/层数）",
+    "qiyun": {
+      "base": "气运流转基准速度（修炼等级 0，单位：每秒气运）",
+      "rate": "每提升 1 修炼等级，基准速度的放大倍率",
+      "activity_cap": "活跃度因子封顶值（0~1，超出的活跃度按封顶计算）",
+      "multiplier_per_skill": "每本已学秘籍带来的加算倍率（multiplier = 1 + 本数 * 该值）"
+    },
+    "growth": {
+      "hero_level_cost": "修炼从当前等级升到下一级所需成本，n=当前修炼等级",
+      "region_difficulty": "地区闯关难度（小怪/关卡强度），n=地区难度档",
+      "boss_power": "Boss 强度，n=Boss 档位"
+    },
+    "drops": {
+      "blindbox_base_rate": "挂机过程中每秒掉落盲盒的基础概率（泊松，无保底，随 activity 缩放；精确值待方案D模拟调参）",
+      "rarity": "盲盒稀有度分布（common/rare/epic，概率和=1，无保底）",
+      "item_types": "盲盒物品类型分布（manual=秘籍/equipment=装备/elixir=丹药，概率和=1）",
+      "qi_yu_rate": "奇遇事件每秒触发率（泊松）",
+      "recruit_rate": "招募事件每秒触发率（泊松）"
+    },
+    "economy": {
+      "income_per_s": "每秒被动产出（qian=钱币/lingshi=灵石/shengwang=声望/neili=内力）",
+      "inflation": "温和通胀系数：世界档位每提升 1 档，物价与产出同乘该系数，保持资源相对稀缺",
+      "exchange": {
+        "lingshi_to_qian": "卖出方向：1 灵石可兑换的钱币数",
+        "qian_to_lingshi": "买入方向：兑换 1 灵石需要支付的钱币数（买入价>卖出价，存在兑换损耗）"
+      },
+      "passive_cost": "被动收益（基础设施）升级成本，n=当前建筑等级（升到 n+1 级）",
+      "common_skill_cost": "通用技能点成本，n=已购技能点数（购第 n+1 点）"
+    }
+  },
   "qiyun": {
     "base": 1.0,
     "rate": 1.15,
@@ -8,20 +38,20 @@
   },
   "growth": {
     "hero_level_cost": {
-      "base": 100,
+      "base": 100.0,
       "rate": 1.3
     },
     "region_difficulty": {
-      "base": 100,
+      "base": 100.0,
       "rate": 1.5
     },
     "boss_power": {
-      "base": 500,
+      "base": 500.0,
       "rate": 1.6
     }
   },
   "drops": {
-    "blindbox_base_rate": 0.15,
+    "blindbox_base_rate": 0.003,
     "rarity": {
       "common": 0.8,
       "rare": 0.15,
@@ -31,26 +61,93 @@
       "manual": 0.4,
       "equipment": 0.4,
       "elixir": 0.2
-    }
+    },
+    "qi_yu_rate": 0.002,
+    "recruit_rate": 0.001
   },
   "economy": {
     "income_per_s": {
       "qian": 1.0,
       "lingshi": 0.05,
-      "shengwang": 0.01
+      "shengwang": 0.01,
+      "neili": 0.0
     },
     "inflation": 1.1,
     "exchange": {
-      "lingshi_to_qian": 100,
-      "qian_to_lingshi": 80
+      "lingshi_to_qian": 80,
+      "qian_to_lingshi": 100
     },
     "passive_cost": {
-      "base": 500,
+      "base": 500.0,
       "rate": 1.4
     },
     "common_skill_cost": {
-      "base": 200,
+      "base": 200.0,
       "rate": 1.5
+    },
+    "inflation_stage_s": 36000,
+    "common_skill": {
+      "qian_mult_per_level": 0.05,
+      "exp_mult_per_level": 0.05
+    },
+    "buildings": [
+      {
+        "id": "b_qian",
+        "name": "聚财堂",
+        "resource": "qian",
+        "mult_per_level": 0.25
+      },
+      {
+        "id": "b_lingshi",
+        "name": "灵石矿脉",
+        "resource": "lingshi",
+        "mult_per_level": 0.25
+      },
+      {
+        "id": "b_shengwang",
+        "name": "聚义堂",
+        "resource": "shengwang",
+        "mult_per_level": 0.25
+      }
+    ],
+    "shop": {
+      "items": [
+        {
+          "id": "cs_point",
+          "kind": "common_skill_point",
+          "name": "通用技能点",
+          "price_curve": "common_skill_cost",
+          "effect": {
+            "points": 1
+          }
+        },
+        {
+          "id": "e1",
+          "kind": "equipment",
+          "price": {
+            "qian": 100
+          }
+        }
+      ]
+    },
+    "sell_ratio": 0.5,
+    "rarity_value": {
+      "common": 50,
+      "rare": 200,
+      "epic": 800
+    },
+    "qi_yu": {
+      "qian_min": 50,
+      "qian_max": 200,
+      "lingshi_min": 1,
+      "lingshi_max": 5
+    },
+    "boss_reward": {
+      "qian_base": 200,
+      "qian_per_difficulty": 100,
+      "lingshi_per_difficulty": 5,
+      "shengwang_per_difficulty": 2,
+      "blindboxes_per_difficulty": 1
     }
   }
 }

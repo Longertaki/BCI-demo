@@ -1,0 +1,5 @@
+# 袖里乾坤 demo 非标准库依赖
+# - pygame：桌宠 UI（M5）优先后端（可 always-on-top）。缺失时 UI 自动降级
+#   tkinter（标准库）或 headless 日志，不影响 --headless 运行。
+# 安装：uv pip install -r requirements.txt   （或 pip install -r requirements.txt）
+pygame>=2.5,<3

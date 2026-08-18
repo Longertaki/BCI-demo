@@ -1,52 +1,255 @@
 {
-  "_note": "静态内容骨架，由执行者 E1 细化填充",
+  "_doc": {
+    "regions": "地区列表：difficulty=地区难度档（对应 growth.region_difficulty 曲线的 n）；boss.tier=Boss 档位（对应 growth.boss_power 曲线的 n）",
+    "heroes": "预设侠客：background=固定背景，aptitude=资质(1~10)，faction=正魔(zheng/mo)；level/skills/equipment 为初始值；power 由 M3 派生，不在此定义",
+    "manuals": "秘籍：faction=universal(通用，正魔皆可)/zheng/mo；rarity=稀有度；power_bonus=强度加成",
+    "equipment": "装备：slot=部位；quality=品质；affixes=特殊词条（示例，百分比加成由 M4 结算）；power_bonus=强度加成",
+    "elixirs": "丹药：rarity=稀有度；power_bonus=强度加成；effect=效果描述"
+  },
   "regions": [
     {
       "id": "r1",
       "name": "新手村外",
-      "difficulty": 1
+      "difficulty": 1,
+      "desc": "草莽初开，野物出没。",
+      "boss": {
+        "id": "b1",
+        "name": "野猪王",
+        "tier": 1,
+        "desc": "盘踞村外的獠牙凶兽。"
+      }
     },
     {
       "id": "r2",
       "name": "华山脚下",
-      "difficulty": 2
+      "difficulty": 2,
+      "desc": "名门试炼之地，剑客往来。",
+      "boss": {
+        "id": "b2",
+        "name": "华山剑灵",
+        "tier": 2,
+        "desc": "守护山门的残剑之灵。"
+      }
     },
     {
       "id": "r3",
       "name": "西域秘境",
-      "difficulty": 3
+      "difficulty": 3,
+      "desc": "黄沙之下埋藏古国秘宝。",
+      "boss": {
+        "id": "b3",
+        "name": "沙盗首领",
+        "tier": 3,
+        "desc": "劫掠商旅的悍匪头目。"
+      }
+    },
+    {
+      "id": "r4",
+      "name": "魔教总坛",
+      "difficulty": 4,
+      "desc": "黑木崖上，魔焰滔天。",
+      "boss": {
+        "id": "b4",
+        "name": "魔教护法",
+        "tier": 4,
+        "desc": "镇守总坛的魔道高手。"
+      }
+    },
+    {
+      "id": "r5",
+      "name": "海外仙岛",
+      "difficulty": 5,
+      "desc": "沧海之上，仙缘缥缈。",
+      "boss": {
+        "id": "b5",
+        "name": "仙岛老祖",
+        "tier": 5,
+        "desc": "避世不出的隐世强者。"
+      }
+    },
+    {
+      "id": "r6",
+      "name": "九幽深渊",
+      "difficulty": 6,
+      "desc": "九幽之下，万物沉寂。",
+      "boss": {
+        "id": "b6",
+        "name": "深渊魔主",
+        "tier": 6,
+        "desc": "深渊尽头的万魔之主。"
+      }
     }
   ],
   "heroes": [
     {
+      "id": "hero",
+      "name": "无名少侠",
+      "is_protagonist": true,
+      "level": 1,
+      "aptitude": 6,
+      "skills": [],
+      "equipment": [],
+      "faction": "zheng",
+      "background": "来历不明的江湖新人"
+    },
+    {
       "id": "hero_1",
       "name": "林小侠",
-      "aptitude": 6,
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 5,
+      "skills": [],
+      "equipment": [],
       "faction": "zheng",
       "background": "落魄剑客"
     },
     {
       "id": "hero_2",
       "name": "慕容霜",
+      "is_protagonist": false,
+      "level": 1,
       "aptitude": 8,
+      "skills": [],
+      "equipment": [],
       "faction": "mo",
       "background": "魔教弃徒"
+    },
+    {
+      "id": "hero_3",
+      "name": "铁牛",
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 4,
+      "skills": [],
+      "equipment": [],
+      "faction": "zheng",
+      "background": "樵夫出身"
+    },
+    {
+      "id": "hero_4",
+      "name": "柳如烟",
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 7,
+      "skills": [],
+      "equipment": [],
+      "faction": "zheng",
+      "background": "药谷弟子"
+    },
+    {
+      "id": "hero_5",
+      "name": "血手人屠",
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 6,
+      "skills": [],
+      "equipment": [],
+      "faction": "mo",
+      "background": "绿林巨寇"
+    },
+    {
+      "id": "hero_6",
+      "name": "夜无痕",
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 9,
+      "skills": [],
+      "equipment": [],
+      "faction": "mo",
+      "background": "暗夜杀手"
+    },
+    {
+      "id": "hero_7",
+      "name": "公孙策",
+      "is_protagonist": false,
+      "level": 1,
+      "aptitude": 6,
+      "skills": [],
+      "equipment": [],
+      "faction": "zheng",
+      "background": "世家公子"
     }
   ],
   "manuals": [
     {
       "id": "m1",
       "name": "吐纳心法",
-      "faction": "zheng",
       "rarity": "common",
-      "power_bonus": 10
+      "faction": "universal",
+      "power_bonus": 10,
+      "desc": "调息吐纳，固本培元。"
     },
     {
       "id": "m2",
-      "name": "九阴残卷",
+      "name": "基础剑法",
+      "rarity": "common",
+      "faction": "zheng",
+      "power_bonus": 12,
+      "desc": "名门正派的入门剑招。"
+    },
+    {
+      "id": "m3",
+      "name": "血煞掌",
+      "rarity": "common",
       "faction": "mo",
+      "power_bonus": 12,
+      "desc": "以血煞之气摧人脏腑。"
+    },
+    {
+      "id": "m4",
+      "name": "轻身提纵术",
+      "rarity": "common",
+      "faction": "universal",
+      "power_bonus": 11,
+      "desc": "身轻如燕，来去如风。"
+    },
+    {
+      "id": "m5",
+      "name": "华山剑诀",
+      "rarity": "rare",
+      "faction": "zheng",
+      "power_bonus": 30,
+      "desc": "华山正宗剑法，气象森严。"
+    },
+    {
+      "id": "m6",
+      "name": "魔音摄魂",
+      "rarity": "rare",
+      "faction": "mo",
+      "power_bonus": 30,
+      "desc": "一曲魔音，摄人心魄。"
+    },
+    {
+      "id": "m7",
+      "name": "混元一气功",
+      "rarity": "rare",
+      "faction": "universal",
+      "power_bonus": 28,
+      "desc": "混元归一，刚柔并济。"
+    },
+    {
+      "id": "m8",
+      "name": "易筋经",
       "rarity": "epic",
-      "power_bonus": 50
+      "faction": "zheng",
+      "power_bonus": 60,
+      "desc": "少林绝学，脱胎换骨。"
+    },
+    {
+      "id": "m9",
+      "name": "九阴残卷",
+      "rarity": "epic",
+      "faction": "mo",
+      "power_bonus": 60,
+      "desc": "残缺魔功，威力莫测。"
+    },
+    {
+      "id": "m10",
+      "name": "无相神功",
+      "rarity": "epic",
+      "faction": "universal",
+      "power_bonus": 55,
+      "desc": "无相无形，万法归一。"
     }
   ],
   "equipment": [
@@ -54,15 +257,118 @@
       "id": "e1",
       "name": "铁剑",
       "rarity": "common",
-      "affixes": []
+      "slot": "weapon",
+      "quality": "普通",
+      "affixes": [],
+      "power_bonus": 8,
+      "desc": "寻常铁匠铺的制式长剑。"
     },
     {
       "id": "e2",
+      "name": "布衣",
+      "rarity": "common",
+      "slot": "armor",
+      "quality": "普通",
+      "affixes": [],
+      "power_bonus": 5,
+      "desc": "粗布短褐，聊以蔽体。"
+    },
+    {
+      "id": "e3",
+      "name": "草鞋",
+      "rarity": "common",
+      "slot": "boots",
+      "quality": "普通",
+      "affixes": [],
+      "power_bonus": 3,
+      "desc": "轻便耐穿的麻草鞋。"
+    },
+    {
+      "id": "e4",
       "name": "青锋剑",
       "rarity": "rare",
+      "slot": "weapon",
+      "quality": "精良",
       "affixes": [
         "攻击+15%"
-      ]
+      ],
+      "power_bonus": 20,
+      "desc": "刃如青霜，吹毛断发。"
+    },
+    {
+      "id": "e5",
+      "name": "玄铁甲",
+      "rarity": "rare",
+      "slot": "armor",
+      "quality": "精良",
+      "affixes": [
+        "防御+20%"
+      ],
+      "power_bonus": 18,
+      "desc": "玄铁铸就，刀枪难入。"
+    },
+    {
+      "id": "e6",
+      "name": "疾风靴",
+      "rarity": "rare",
+      "slot": "boots",
+      "quality": "精良",
+      "affixes": [
+        "身法+10%"
+      ],
+      "power_bonus": 12,
+      "desc": "踏风而行，迅疾如电。"
+    },
+    {
+      "id": "e7",
+      "name": "寒玉箫",
+      "rarity": "rare",
+      "slot": "weapon",
+      "quality": "精良",
+      "affixes": [
+        "内功+12%"
+      ],
+      "power_bonus": 19,
+      "desc": "寒玉为管，音律伤人。"
+    },
+    {
+      "id": "e8",
+      "name": "龙泉剑",
+      "rarity": "epic",
+      "slot": "weapon",
+      "quality": "神兵",
+      "affixes": [
+        "攻击+30%",
+        "会心+10%"
+      ],
+      "power_bonus": 45,
+      "desc": "古之龙泉，剑气冲霄。"
+    },
+    {
+      "id": "e9",
+      "name": "天蚕宝衣",
+      "rarity": "epic",
+      "slot": "armor",
+      "quality": "神兵",
+      "affixes": [
+        "防御+30%",
+        "气血+15%"
+      ],
+      "power_bonus": 40,
+      "desc": "天蚕丝织就，水火不侵。"
+    },
+    {
+      "id": "e10",
+      "name": "追云履",
+      "rarity": "epic",
+      "slot": "boots",
+      "quality": "神兵",
+      "affixes": [
+        "身法+20%",
+        "闪避+8%"
+      ],
+      "power_bonus": 30,
+      "desc": "一步追云，踏雪无痕。"
     }
   ],
   "elixirs": [
@@ -70,13 +376,49 @@
       "id": "d1",
       "name": "培元丹",
       "rarity": "common",
-      "power_bonus": 5
+      "power_bonus": 5,
+      "effect": "永久提升少量强度",
+      "desc": "培本固元，强身健体。"
     },
     {
       "id": "d2",
+      "name": "金创药",
+      "rarity": "common",
+      "power_bonus": 4,
+      "effect": "回复气血并小幅提升强度",
+      "desc": "刀伤剑创，药到病除。"
+    },
+    {
+      "id": "d3",
+      "name": "聚气丹",
+      "rarity": "rare",
+      "power_bonus": 15,
+      "effect": "永久提升强度",
+      "desc": "聚气凝神，内力自生。"
+    },
+    {
+      "id": "d4",
+      "name": "凝神丹",
+      "rarity": "rare",
+      "power_bonus": 16,
+      "effect": "永久提升强度",
+      "desc": "凝神静气，心魔不生。"
+    },
+    {
+      "id": "d5",
       "name": "洗髓丹",
       "rarity": "epic",
-      "power_bonus": 30
+      "power_bonus": 35,
+      "effect": "永久大幅提升强度",
+      "desc": "洗筋伐髓，脱胎换骨。"
+    },
+    {
+      "id": "d6",
+      "name": "九转还魂丹",
+      "rarity": "epic",
+      "power_bonus": 45,
+      "effect": "永久大幅提升强度",
+      "desc": "九转炼成，起死回生。"
     }
   ]
 }

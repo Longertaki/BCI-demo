@@ -23,7 +23,7 @@ demo/
 │   ├── balance.json      # 数值参数（曲线、掉落率、经济）
 │   └── content.json      # 静态内容（地区、侠客、秘籍、装备、丹药）
 ├── balance.py            # M1：读取 JSON + 提供曲线函数
-├── signal/               # M2：信号采集
+├── bci_signal/           # M2：信号采集
 │   ├── __init__.py
 │   ├── keyboard.py       #   真实键盘活跃度
 │   └── simulator.py      #   模拟信号源（demo 主力）
@@ -115,7 +115,7 @@ class Balance:
 ```
 - 只读 JSON，不做业务逻辑。`config/balance.json` 里的字段由 M1 定义并示例。
 
-### M2 signal
+### M2 bci_signal
 ```python
 def get_activity() -> float   # 真实键盘或模拟，输出 0~1
 ```
