@@ -224,6 +224,11 @@ class Economy:
             log.info("购买失败(%s): %s", item_id, detail)
         return ok
 
+    def _recompute(self, hero) -> None:
+        """装备/学习/服丹后刷新派生战力（M3 的 recompute_power）。"""
+        from core import recompute_power
+        recompute_power(hero, self.balance_cfg, self.content_cfg)
+
     def learn_skill(self, world, hero_id, manual_id) -> bool:
         """秘籍学习：一次性、学习即消耗（从库存移除，加入侠客 skills）。"""
         state = self._state(world)
@@ -236,9 +241,15 @@ class Economy:
             return False
         if manual_id in (hero.get("skills") or []):
             return False  # 已学
+        # 正魔限制：正道只学正派/通用，魔道只学魔道/通用
+        hero_faction = hero.get("faction", "universal")
+        item_faction = getattr(item, "faction", "universal") or "universal"
+        if item_faction != "universal" and item_faction != hero_faction:
+            return False
         if not self._consume_item(state, manual_id):
             return False
         hero.setdefault("skills", []).append(manual_id)
+        self._recompute(hero)
         state["economy"]["stats"]["skills_learned"] = int(state["economy"]["stats"].get("skills_learned", 0) or 0) + 1
         return True
 
@@ -254,6 +265,12 @@ class Economy:
             return False
         if gear_id in (hero.get("equipment") or []):
             return False  # 已穿戴
+        # 部位唯一：同一 slot 只能穿戴一件
+        slot = getattr(item, "slot", "") or ""
+        if slot:
+            worn = [getattr(self.catalog.get(gid), "slot", "") or "" for gid in (hero.get("equipment") or [])]
+            if slot in worn:
+                return False
         if not self._consume_item(state, gear_id):
             return False
         hero.setdefault("equipment", []).append(gear_id)
@@ -261,6 +278,7 @@ class Economy:
         equipped = [self.catalog.get(gid) for gid in hero["equipment"]]
         equipped = [e for e in equipped if e is not None]
         hero["affix_bonus"] = sum_affixes(equipped)
+        self._recompute(hero)
         return True
 
     def use_elixir(self, world, hero_id, elixir_id) -> bool:
@@ -279,6 +297,7 @@ class Economy:
         if not self._consume_item(state, elixir_id):
             return False
         hero.setdefault("elixirs", []).append(elixir_id)
+        self._recompute(hero)
         state["economy"]["stats"]["elixirs_used"] = int(state["economy"]["stats"].get("elixirs_used", 0) or 0) + 1
         return True
 
