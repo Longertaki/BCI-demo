@@ -1,0 +1,82 @@
+{
+  "_note": "静态内容骨架，由执行者 E1 细化填充",
+  "regions": [
+    {
+      "id": "r1",
+      "name": "新手村外",
+      "difficulty": 1
+    },
+    {
+      "id": "r2",
+      "name": "华山脚下",
+      "difficulty": 2
+    },
+    {
+      "id": "r3",
+      "name": "西域秘境",
+      "difficulty": 3
+    }
+  ],
+  "heroes": [
+    {
+      "id": "hero_1",
+      "name": "林小侠",
+      "aptitude": 6,
+      "faction": "zheng",
+      "background": "落魄剑客"
+    },
+    {
+      "id": "hero_2",
+      "name": "慕容霜",
+      "aptitude": 8,
+      "faction": "mo",
+      "background": "魔教弃徒"
+    }
+  ],
+  "manuals": [
+    {
+      "id": "m1",
+      "name": "吐纳心法",
+      "faction": "zheng",
+      "rarity": "common",
+      "power_bonus": 10
+    },
+    {
+      "id": "m2",
+      "name": "九阴残卷",
+      "faction": "mo",
+      "rarity": "epic",
+      "power_bonus": 50
+    }
+  ],
+  "equipment": [
+    {
+      "id": "e1",
+      "name": "铁剑",
+      "rarity": "common",
+      "affixes": []
+    },
+    {
+      "id": "e2",
+      "name": "青锋剑",
+      "rarity": "rare",
+      "affixes": [
+        "攻击+15%"
+      ]
+    }
+  ],
+  "elixirs": [
+    {
+      "id": "d1",
+      "name": "培元丹",
+      "rarity": "common",
+      "power_bonus": 5
+    },
+    {
+      "id": "d2",
+      "name": "洗髓丹",
+      "rarity": "epic",
+      "power_bonus": 30
+    }
+  ]
+}
